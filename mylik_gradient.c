@@ -31,14 +31,17 @@ void mylik_gradient(int *n, double *y, double *xall, double *par, double *length
 			}
 		}
 	}
+	return;
 }
 
 void mylik_gradient_second(int *n, double *y, double *xall, double *par, double *length_par, double *result)
 {
-	int j, l, ini, index, row;
+	int j, l, ini, index, row, matrix_index, m, k;
+	int matrix_size = (int)(length_par[0]*length_par[0]);
 	double temp, temp1;
-	int arr[15]; 
-	for (index=0; index < length_par[0]; index++){
+	int *arr = malloc(length_par[0]*sizeof(int));
+
+	for (index=0; index < matrix_size; index++){
 		result[index] = 0;
 	}
 
@@ -60,27 +63,20 @@ void mylik_gradient_second(int *n, double *y, double *xall, double *par, double 
 				arr[row] = (xall[row*n[0]+j]-xall[row*n[0]+l]);	
 			}
 			
-			result[0] += -(y[j]-y[l])*(y[j]-y[l])*arr[0]*arr[0]*(temp/((1+temp)*(1+temp)));
-			result[1] += -(y[j]-y[l])*(y[j]-y[l])*arr[0]*arr[1]*(temp/((1+temp)*(1+temp)));
-			result[2] += -(y[j]-y[l])*(y[j]-y[l])*arr[0]*arr[2]*(temp/((1+temp)*(1+temp)));
-			result[3] += -(y[j]-y[l])*(y[j]-y[l])*arr[0]*arr[3]*(temp/((1+temp)*(1+temp)));
-
-			result[4] += -(y[j]-y[l])*(y[j]-y[l])*arr[1]*arr[0]*(temp/((1+temp)*(1+temp)));
-			result[5] += -(y[j]-y[l])*(y[j]-y[l])*arr[1]*arr[1]*(temp/((1+temp)*(1+temp)));
-			result[6] += -(y[j]-y[l])*(y[j]-y[l])*arr[1]*arr[2]*(temp/((1+temp)*(1+temp)));
-			result[7] += -(y[j]-y[l])*(y[j]-y[l])*arr[1]*arr[3]*(temp/((1+temp)*(1+temp)));
-
-			result[8] += -(y[j]-y[l])*(y[j]-y[l])*arr[2]*arr[0]*(temp/((1+temp)*(1+temp)));
-			result[9] += -(y[j]-y[l])*(y[j]-y[l])*arr[2]*arr[1]*(temp/((1+temp)*(1+temp)));
-			result[10] += -(y[j]-y[l])*(y[j]-y[l])*arr[2]*arr[2]*(temp/((1+temp)*(1+temp)));
-			result[11] += -(y[j]-y[l])*(y[j]-y[l])*arr[2]*arr[3]*(temp/((1+temp)*(1+temp)));
-
-			result[12] += -(y[j]-y[l])*(y[j]-y[l])*arr[3]*arr[0]*(temp/((1+temp)*(1+temp)));
-			result[13] += -(y[j]-y[l])*(y[j]-y[l])*arr[3]*arr[1]*(temp/((1+temp)*(1+temp)));
-			result[14] += -(y[j]-y[l])*(y[j]-y[l])*arr[3]*arr[2]*(temp/((1+temp)*(1+temp)));
-			result[15] += -(y[j]-y[l])*(y[j]-y[l])*arr[3]*arr[3]*(temp/((1+temp)*(1+temp)));
+			matrix_index = 0;
+			for (m = 0; m<length_par[0]; m++)
+			{
+				for (k = 0; k<length_par[0];k++)
+				{
+					result[matrix_index] += -(y[j]-y[l])*(y[j]-y[l])*arr[m]*arr[k]*(temp/((1+temp)*(1+temp)));
+					matrix_index = matrix_index + 1;
+				}
+			}
 		}
 	}
+
+	free(arr);
+	return;
 }
 
 
